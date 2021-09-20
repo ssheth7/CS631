@@ -1,0 +1,15 @@
+hw1-bbcp README
+
+Problems I faced
+
+Problem #1: Opening the destination file
+I struggled with identifying the correct flags for open(2). Error checking the source file was not difficult, as the only requirement was that it was a regular file. 
+
+Opening the destination file required more thought, as the argument can either be a directory, an existing file, and not existing file. We also had to check to make sure the source and destination were not the same file. I had to compare the paths using basename(3) and dirname(3) and I also had to compare the inode numbers with stat(2) to make sure they did not point to the same inode.
+
+Problem #2: Reading & Writing in chunks
+My initial approach was to use stat(2) to find the source file size, and then use malloc(3) to create a buffer the same size of the source file. The file would be read at once, and then I would write to the destination file. However, this was not scalable as the program would require more memory. Luckily, the manual page for read(2) explains how to loop through a file and read the file in chunks. Writing to the destination file just required me to write the buffer I read in the previous line. 
+
+Problem #3 : Reading from a fifo
+This problem took me the longest to solve. The error checking for this case was simple as the source had to be a fifo and the destination had to be a regular file. My first approach was to use my logic for reading/writing a file in chunks and place it in an infinite loop. The program would wait forever, and when bytes are read from the fifo, those bytes would subsequently be written to the destination. However, the bytes could not be read consistently. I would save the number of bytes read into the buffer into a variable, and write those same number of bytes into the destination file, but the destination file would always be empty. I then wrote the full buffer whenever bytes were read from the file. The file would read the same, but the sizes were different.
+
