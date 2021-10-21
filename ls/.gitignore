@@ -1,0 +1,7 @@
+ls
+*.swp
+testdir/
+ls.core
+ls-test
+*.o
+2testdir/
